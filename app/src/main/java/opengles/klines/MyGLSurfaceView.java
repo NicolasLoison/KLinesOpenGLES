@@ -36,15 +36,15 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     private final Scene mRenderer;
 
-    public MyGLSurfaceView(Context context) {
-        super(context);
+    public MyGLSurfaceView(OpenGLES30Activity activity) {
+        super(activity);
 
         setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         // Création d'un context OpenGLES 3.0
         setEGLContextClientVersion(1);
 
         // Création du renderer qui va être lié au conteneur View créé
-        mRenderer = new MainScene(context);
+        mRenderer = new MainScene(activity);
         setRenderer(mRenderer);
 
         // Option pour indiquer qu'on redessine uniquement si les données changent

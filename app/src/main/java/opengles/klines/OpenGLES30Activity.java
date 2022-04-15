@@ -14,9 +14,6 @@ openGLES.zip HelloOpenGLES20
 
 public class OpenGLES30Activity extends Activity {
 
-    // le conteneur View pour faire du rendu OpenGL
-    private GLSurfaceView mGLView;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,9 +27,8 @@ public class OpenGLES30Activity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
-
-        mGLView = new MyGLSurfaceView(this);
+        // le conteneur View pour faire du rendu OpenGL
+        GLSurfaceView mGLView = new MyGLSurfaceView(this);
         /* Définition de View pour cette activité */
         setContentView(mGLView);
     }

@@ -3,24 +3,34 @@ package opengles.klines.view;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import opengles.klines.GameOverActivity;
+import opengles.klines.MainActivity;
+import opengles.klines.OpenGLES30Activity;
 import opengles.klines.R;
 import opengles.klines.modele.Drawer;
 import opengles.klines.modele.Facade;
 import opengles.klines.modele.Grid;
-import opengles.klines.modele.Pions;
+import opengles.klines.modele.Tile;
 import opengles.klines.modele.Position;
 import opengles.klines.modele.Score;
 import opengles.klines.exception.NoPossiblePath;
 import opengles.klines.exception.OutofBounds;
-import opengles.klines.exception.PionsNotInGrid;
+import opengles.klines.exception.TilesNotInGrid;
 import opengles.klines.exception.TargetNotEmpty;
 
 public class GameManager extends MonoBehaviour implements Score, Drawer {
@@ -29,17 +39,21 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
     Grid grid;
     List<GameObject> gridGO = new ArrayList<>();
     GameObject case_selector;
-    Pions selectedPion;
+    Tile selectedPion;
     TextRenderer scoreTextRenderer;
     int score = 0;
-    private final HashMap<Pions, GameObject> pionsGameObjectHashMap = new HashMap<>();
+    private final HashMap<Tile, GameObject> tileGameObjectHashMap = new HashMap<>();
     private boolean pionMoved = false;
+    public OpenGLES30Activity activity;
+    private final SharedPreferences prefs;
 
-    public GameManager(GameObject gameObject) {
+    public GameManager(GameObject gameObject, OpenGLES30Activity activity) {
         super(gameObject);
+        this.activity = activity;
+        prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
         initScore();
         facade = new Facade(this, this);
-        grid = facade.createGrid(9);
+        grid = facade.createGrid(prefs.getInt("gridType", 9));
         for(int i = 0; i<grid.getGridSize(); i++){
             for(int j=0; j< grid.getGridSize(); j++){
                 float start = -(Camera.main.getSize()/2f);
@@ -47,7 +61,11 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                 gridGO.add(caseGO);
                 caseGO.transform.positionX = start+i+0.5f; // 0.5 car le transform est au centre du gameobject
                 caseGO.transform.positionY = start+j+0.5f;
-                caseGO.addComponent(new SpriteRenderer(caseGO, R.drawable.resource_case));
+                if ((i*grid.getGridSize()+j) % 2 == 0) {
+                    caseGO.addComponent(new SpriteRenderer(caseGO, R.drawable.casepaire));
+                } else {
+                    caseGO.addComponent(new SpriteRenderer(caseGO, R.drawable.caseimpaire));
+                }
                 caseGO.addComponent(new SpriteCollider(caseGO));
                 caseGO.addComponent(new OnClickCallBackBehaviour(caseGO, gameObject1 -> {
                     if(case_selector != null && (case_selector.transform.positionX != gameObject1.transform.positionX || case_selector.transform.positionY != gameObject1.transform.positionY)){
@@ -60,7 +78,11 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                                 facade.moove(selectedPion, new Position(x, y));
                                 pionMoved = true;
                                 resetSelection();
-                            } catch (TargetNotEmpty | NoPossiblePath | PionsNotInGrid targetNotEmpty) {
+                            } catch (TargetNotEmpty targetNotEmpty) {
+                                Toast.makeText(getActivity(), "La case n'est pas vide", Toast.LENGTH_SHORT).show();
+                            } catch (NoPossiblePath targetNotEmpty) {
+                                Toast.makeText(getActivity(), "Chemin impossible", Toast.LENGTH_SHORT).show();
+                            } catch (TilesNotInGrid targetNotEmpty) {
                                 targetNotEmpty.printStackTrace();
                             }
                         }
@@ -94,16 +116,16 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
     @Override
     public void Draw(GL10 gl) {
-        if(selectedPion != null && !grid.containsPions(selectedPion)){
-            GameObject pionsGo = pionsGameObjectHashMap.get(selectedPion);
-            pionsGo.scene.remove(pionsGo);
+        if(selectedPion != null && !grid.containsTiles(selectedPion)){
+            GameObject tileGo = tileGameObjectHashMap.get(selectedPion);
+            tileGo.scene.remove(tileGo);
             selectedPion = null;
             case_selector.scene.remove(case_selector);
         }
         super.Draw(gl);
     }
 
-    private int getImageRessource(Pions p){
+    private int getImageRessource(Tile p){
         if(p!=null){
             switch(p.getType()){
                 case 0: return R.drawable.apple;
@@ -118,14 +140,18 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                     return R.drawable.apple;
             }
         }
-        System.out.println("pions null");
+        System.out.println("tile null");
         return R.drawable.apple;
     }
 
+    public Activity getActivity() {
+        return this.activity;
+    }
 
-    private Pions getPions(GameObject pionsGO){
-        for(Map.Entry<Pions, GameObject> entry : pionsGameObjectHashMap.entrySet()){
-            if(entry.getValue() == pionsGO){
+
+    private Tile getTiles(GameObject tileGO){
+        for(Map.Entry<Tile, GameObject> entry : tileGameObjectHashMap.entrySet()){
+            if(entry.getValue() == tileGO){
                 return entry.getKey();
             }
         }
@@ -137,8 +163,8 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
         float start = -(Camera.main.getSize()/2f);
 
-        for(Map.Entry<Pions, GameObject> entry : pionsGameObjectHashMap.entrySet()){
-            if(!g.containsPions(entry.getKey())){
+        for(Map.Entry<Tile, GameObject> entry : tileGameObjectHashMap.entrySet()){
+            if(!g.containsTiles(entry.getKey())){
                 entry.getValue().scene.remove(entry.getValue());
             }
 //            else{
@@ -149,23 +175,23 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
         for(int i = 0; i < grid.getGridSize(); i++){
             for(int j = 0; j < grid.getGridSize(); j++){
-                Pions p = null;
+                Tile p = null;
                 try {
-                    p = grid.getPions(i,j);
+                    p = grid.getTiles(i,j);
                 } catch (OutofBounds outofBounds) {
                     outofBounds.printStackTrace();
                 }
 
                 if(p!=null){
-                    if(!pionsGameObjectHashMap.containsKey(p)){
-                        System.out.println("Pions "+i+":"+j);
-                        GameObject pionsGO = new GameObject(this.gameObject.scene, "Pions "+i+":"+j);
-                        pionsGO.transform.positionX = start+i+0.5f; // 0.5 car le transform est au centre du gameobject
-                        pionsGO.transform.positionY = start+j+0.5f;
-                        pionsGO.addComponent(new SpriteRenderer(pionsGO, this.getImageRessource(p)));
-                        pionsGO.addComponent(new SpriteCollider(pionsGO));
-                        pionsGO.addComponent(new OnClickCallBackBehaviour(pionsGO, gameObject -> {
-                            Pions p1 = getPions(gameObject);
+                    if(!tileGameObjectHashMap.containsKey(p)){
+                        System.out.println("Tile "+i+":"+j);
+                        GameObject tileGO = new GameObject(this.gameObject.scene, "Tile "+i+":"+j);
+                        tileGO.transform.positionX = start+i+0.5f; // 0.5 car le transform est au centre du gameobject
+                        tileGO.transform.positionY = start+j+0.5f;
+                        tileGO.addComponent(new SpriteRenderer(tileGO, this.getImageRessource(p)));
+                        tileGO.addComponent(new SpriteCollider(tileGO));
+                        tileGO.addComponent(new OnClickCallBackBehaviour(tileGO, gameObject -> {
+                            Tile p1 = getTiles(gameObject);
                             if(p1 !=null){
                                 if (selectedPion != null && selectedPion.equals(p1)) {
                                     resetSelection();
@@ -176,7 +202,7 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                                         case_selector.scene.remove(case_selector);
                                     }
                                     case_selector = new GameObject(gameObject.scene, "Case selector");
-                                    case_selector.addComponent(new SpriteRenderer(case_selector, R.drawable.case_select));
+                                    case_selector.addComponent(new SpriteRenderer(case_selector, R.drawable.selected_tile));
                                     case_selector.addComponent(new SpriteCollider(case_selector));
                                     case_selector.transform.positionX = gameObject.transform.positionX;
                                     case_selector.transform.positionY = gameObject.transform.positionY;
@@ -189,22 +215,22 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
                             return null;
                         }));
-                        pionsGameObjectHashMap.put(p, pionsGO);
+                        tileGameObjectHashMap.put(p, tileGO);
                     }
                     else{
-                        GameObject pionsGO = pionsGameObjectHashMap.get(p);
-                        pionsGO.name = "Pions "+i+":"+j;
+                        GameObject tileGO = tileGameObjectHashMap.get(p);
+                        tileGO.name = "Tile "+i+":"+j;
                         // TODO une animation de déplacement avec fonction de easing ?
-                        pionsGO.transform.positionX = start+i+0.5f;
-                        pionsGO.transform.positionY = start+j+0.5f;
-                        pionsGO.scene.add(pionsGO);
+                        tileGO.transform.positionX = start+i+0.5f;
+                        tileGO.transform.positionY = start+j+0.5f;
+                        tileGO.scene.add(tileGO);
                     }
                 }
             }
         }
-        if(selectedPion != null && !grid.containsPions(selectedPion)){
-            GameObject pionsGo = pionsGameObjectHashMap.get(selectedPion);
-            pionsGo.scene.remove(pionsGo);
+        if(selectedPion != null && !grid.containsTiles(selectedPion)){
+            GameObject tileGo = tileGameObjectHashMap.get(selectedPion);
+            tileGo.scene.remove(tileGo);
             selectedPion = null;
             case_selector.scene.remove(case_selector);
         }
@@ -223,14 +249,28 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
 
     @Override
-    public void drawNext(List<Pions> pionsList) {
+    public void drawNext(List<Tile> tileList) {
         // TODO
     }
 
     @Override
-    public void gameOver(Grid g) {
-        System.out.println("GAME OVER");
-        // TODO
+    public void gameOver() {
+        saveScore();
+        activity.startActivity(new Intent(activity, GameOverActivity.class));
+        activity.finish();
+    }
+
+    private void saveScore() {
+        SharedPreferences.Editor editor  = prefs.edit();
+        String highscoreKeyGridType = String.format(Locale.getDefault(), "highscore%d", grid.getGridSize());
+
+        int highscore = prefs.getInt(highscoreKeyGridType, 0);
+        if (score > highscore) {
+            editor.putInt(highscoreKeyGridType, score);
+            editor.putBoolean("isNewBest", true);
+        }
+        editor.putInt("lastScore", score);
+        editor.apply();
     }
 
     @Override

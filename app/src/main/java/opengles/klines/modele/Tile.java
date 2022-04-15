@@ -3,13 +3,13 @@ package opengles.klines.modele;
 
 import java.util.Objects;
 
-public class Pions {
+public class Tile {
 
     private static int global_id = 0;
     private final int id;
     private final int type;
 
-    public Pions(int type){
+    public Tile(int type){
         this.id = global_id;
         global_id += 1;
         this.type = type;
@@ -22,16 +22,16 @@ public class Pions {
         return id;
     }
 
-    public boolean sameType(Pions p){
-        return type == p.type;
+    public boolean sameType(Tile tile){
+        return type == tile.type;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Pions pions = (Pions) o;
-        return id == pions.getId();
+        Tile tile = (Tile) o;
+        return id == tile.getId();
     }
 
     @Override

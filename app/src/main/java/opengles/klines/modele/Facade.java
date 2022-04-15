@@ -1,8 +1,9 @@
 package opengles.klines.modele;
 
 import opengles.klines.exception.NoPossiblePath;
-import opengles.klines.exception.PionsNotInGrid;
 import opengles.klines.exception.TargetNotEmpty;
+import opengles.klines.exception.TilesNotInGrid;
+import opengles.klines.view.Camera;
 
 public class Facade {
 
@@ -17,6 +18,7 @@ public class Facade {
 
     public Grid createGrid(int type){
         g = new Grid(type, score, drawer);
+        Camera.main.setSize(type);
         return g;
     }
 
@@ -24,10 +26,10 @@ public class Facade {
         g.moove(from.getX(), from.getY(), to.getX(), to.getY());
     }
 
-    public void moove(Pions from, Position to) throws TargetNotEmpty, NoPossiblePath, PionsNotInGrid {
+    public void moove(Tile from, Position to) throws TargetNotEmpty, NoPossiblePath, TilesNotInGrid {
         Position p  = g.getPosition(from);
         if(p == null){
-            throw new PionsNotInGrid();
+            throw new TilesNotInGrid();
         }
         moove(p, to);
     }
