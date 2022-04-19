@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.microedition.khronos.opengles.GL10;
 
 import opengles.klines.GameOverActivity;
-import opengles.klines.MainActivity;
 import opengles.klines.OpenGLES30Activity;
 import opengles.klines.R;
 import opengles.klines.modele.Drawer;
@@ -37,7 +36,7 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
     Facade facade;
     Grid grid;
-    List<GameObject> gridGO = new ArrayList<>();
+    List<GameObject> gridCanvas, nextCanvas, nextsSprite;
     GameObject case_selector;
     Tile selectedPion;
     TextRenderer scoreTextRenderer;
@@ -51,14 +50,21 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
         super(gameObject);
         this.activity = activity;
         prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
-        initScore();
         facade = new Facade(this, this);
-        grid = facade.createGrid(prefs.getInt("gridType", 9));
+        grid = facade.createGrid(prefs.getInt("gridType", 9), prefs);
+        setScoreCanvas();
+        setGridCanvas();
+        setNextCanvas();
+        grid.spawnNext();
+    }
+
+    private void setGridCanvas() {
+        gridCanvas = new ArrayList<>();
         for(int i = 0; i<grid.getGridSize(); i++){
             for(int j=0; j< grid.getGridSize(); j++){
                 float start = -(Camera.main.getSize()/2f);
                 GameObject caseGO = new GameObject(this.gameObject.scene, "Case "+i+":"+j);
-                gridGO.add(caseGO);
+                gridCanvas.add(caseGO);
                 caseGO.transform.positionX = start+i+0.5f; // 0.5 car le transform est au centre du gameobject
                 caseGO.transform.positionY = start+j+0.5f;
                 if ((i*grid.getGridSize()+j) % 2 == 0) {
@@ -71,7 +77,7 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                     if(case_selector != null && (case_selector.transform.positionX != gameObject1.transform.positionX || case_selector.transform.positionY != gameObject1.transform.positionY)){
                         case_selector.scene.remove(case_selector);
                         if(selectedPion!=null){
-                            int index = gridGO.indexOf(gameObject1);
+                            int index = gridCanvas.indexOf(gameObject1);
                             int x = index / grid.getGridSize();
                             int y = index % grid.getGridSize();
                             try {
@@ -89,20 +95,40 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                     }
                     return null;
                 }));
-
             }
         }
-        grid.spawnNext();
     }
 
-    private void initScore() {
+    private void setNextCanvas() {
+        this.nextCanvas = new ArrayList<>();
+        this.nextsSprite = new ArrayList<>();
+        for (int i = 0; i < grid.getNbNext(); i++){
+            float posY =  -1 - grid.getGridSize()/2f;
+            GameObject caseNext = new GameObject(this.gameObject.scene);
+            caseNext.transform.positionX = -((grid.getNbNext()-1)/2f)+i;
+            // centré malgré le nombre de suivants qui peut changer
+            caseNext.transform.positionY = posY;
+            GameObject fruitSprite = new GameObject(this.gameObject.scene);
+            fruitSprite.transform.positionX = caseNext.transform.positionX;
+            fruitSprite.transform.positionY = posY;
+            if (i % 2 == 0) {
+                caseNext.addComponent(new SpriteRenderer(caseNext, R.drawable.casepaire));
+            } else {
+                caseNext.addComponent(new SpriteRenderer(caseNext, R.drawable.caseimpaire));
+            }
+            this.nextCanvas.add(caseNext);
+            this.nextsSprite.add(fruitSprite);
+        }
+    }
+
+    private void setScoreCanvas() {
         GameObject affichageScore = new GameObject(this.gameObject.scene, "Score");
         affichageScore.transform.positionX = 0f;
         affichageScore.transform.scaleX = 3;
         affichageScore.transform.scaleY = 3;
-        affichageScore.transform.positionY = 5f;
+        affichageScore.transform.positionY = grid.getGridSize()/2f + 1;
         affichageScore.transform.anchorPoint = TransformAnchorPoint.Center;
-        scoreTextRenderer = new TextRenderer(affichageScore,"SCORE : 0", Color.valueOf(Color.WHITE));
+        scoreTextRenderer = new TextRenderer(affichageScore,"Score : 0", Color.valueOf(Color.WHITE));
         affichageScore.addComponent(scoreTextRenderer);
     }
 
@@ -132,9 +158,9 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                 case 1: return R.drawable.banana;
                 case 2: return R.drawable.cherry;
                 case 3: return R.drawable.kiwi;
-                case 4: return R.drawable.lemon;
+                case 4: return R.drawable.pineapple;
                 case 5: return R.drawable.pear;
-                case 6: return R.drawable.pineapple;
+                case 6: return R.drawable.lemon;
                 default:
                     System.out.println("Type>6");
                     return R.drawable.apple;
@@ -184,7 +210,6 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
                 if(p!=null){
                     if(!tileGameObjectHashMap.containsKey(p)){
-                        System.out.println("Tile "+i+":"+j);
                         GameObject tileGO = new GameObject(this.gameObject.scene, "Tile "+i+":"+j);
                         tileGO.transform.positionX = start+i+0.5f; // 0.5 car le transform est au centre du gameobject
                         tileGO.transform.positionY = start+j+0.5f;
@@ -220,7 +245,6 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                     else{
                         GameObject tileGO = tileGameObjectHashMap.get(p);
                         tileGO.name = "Tile "+i+":"+j;
-                        // TODO une animation de déplacement avec fonction de easing ?
                         tileGO.transform.positionX = start+i+0.5f;
                         tileGO.transform.positionY = start+j+0.5f;
                         tileGO.scene.add(tileGO);
@@ -249,8 +273,16 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
 
 
     @Override
-    public void drawNext(List<Tile> tileList) {
-        // TODO
+    public void drawNext(List<Tile> nextTiles) {
+        // on remplace le sprite à chaque fois pour pas surcharger la case de sprite
+        for (int i = 0; i < grid.getNbNext(); i++){
+            GameObject fruitGO = this.nextsSprite.get(i);
+            SpriteRenderer fruitSprite = new SpriteRenderer(fruitGO, this.getImageRessource(nextTiles.get(i)));
+            if (fruitGO.componentList.isEmpty())
+                fruitGO.addComponent(fruitSprite);
+            else
+                fruitGO.componentList.set(0, fruitSprite);
+        }
     }
 
     @Override
@@ -276,6 +308,6 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
     @Override
     public void notifyScoreChanged(int addedScore) {
         score += addedScore;
-        scoreTextRenderer.setText("SCORE : "+score);
+        scoreTextRenderer.setText("Score : "+score);
     }
 }
