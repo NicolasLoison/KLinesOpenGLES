@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/clouds"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="-60dp" />
+
+    <TextView
+        android:id="@+id/settingsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="92dp"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/settings"
+        android:textSize="35sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nbNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="92dp"
+        android:layout_marginEnd="28dp"
+        android:text="@string/new_fruits_per_move"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/nextPicker"
+        app:layout_constraintTop_toBottomOf="@+id/settingsText" />
+
+    <NumberPicker
+        android:id="@+id/aligne9Picker"
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="68dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nextPicker" />
+
+    <NumberPicker
+        android:id="@+id/nextPicker"
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="68dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsText" />
+
+    <NumberPicker
+        android:id="@+id/aligne7Picker"
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="68dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/aligne9Picker" />
+
+    <TextView
+        android:id="@+id/nbAligne9"
+        android:layout_width="180dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/alignment_for_9x9_grid"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/aligne9Picker"
+        app:layout_constraintTop_toBottomOf="@+id/nbNext" />
+
+    <TextView
+        android:id="@+id/nbAligne7"
+        android:layout_width="180dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/alignment_for_7x7_grid"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/aligne7Picker"
+        app:layout_constraintTop_toBottomOf="@+id/nbAligne9" />
+
+    <Button
+        android:id="@+id/home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="156dp"
+        android:text="@string/home"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/aligne7Picker"
+        app:layout_constraintVertical_bias="0.129" />
+
+    <Button
+        android:id="@+id/resetHighscore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/reset_highscores"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/setdefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/set_to_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

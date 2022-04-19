@@ -1,5 +1,7 @@
 package opengles.klines.modele;
 
+import android.content.SharedPreferences;
+
 import opengles.klines.exception.NoPossiblePath;
 import opengles.klines.exception.TargetNotEmpty;
 import opengles.klines.exception.TilesNotInGrid;
@@ -16,8 +18,8 @@ public class Facade {
         this.drawer = d;
     }
 
-    public Grid createGrid(int type){
-        g = new Grid(type, score, drawer);
+    public Grid createGrid(int type, SharedPreferences prefs){
+        g = new Grid(prefs, score, drawer);
         Camera.main.setSize(type);
         return g;
     }

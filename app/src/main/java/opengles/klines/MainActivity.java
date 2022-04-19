@@ -20,17 +20,18 @@ public class MainActivity extends AppCompatActivity {
 
         Button grid9 = findViewById(R.id.ninegrid);
         Button grid7 = findViewById(R.id.sevengrid);
-        Intent intent = new Intent(MainActivity.this, OpenGLES30Activity.class);
+
+        Intent gameIntent = new Intent(MainActivity.this, OpenGLES30Activity.class);
         grid9.setOnClickListener(
                 v -> {
                     setGridType(9);
-                    startActivity(intent);
+                    startActivity(gameIntent);
                 }
         );
         grid7.setOnClickListener(
                 v -> {
                     setGridType(7);
-                    startActivity(intent);
+                    startActivity(gameIntent);
                 }
         );
 
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         TextView score7Txt = findViewById(R.id.highscore7Text);
         score9Txt.setText(getString(R.string.highscore9, highscore9));
         score7Txt.setText(getString(R.string.highscore7, highscore7));
+
+        findViewById(R.id.settings).setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
 
     }
 
