@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="try_again">Réessayer</string>
+    <string name="home">Accueil</string>
+    <string name="jouer_9x9">Jouer 9x9</string>
+    <string name="jouer_7x7">Jouer 7x7</string>
+    <string name="highscore9">Meilleur score 9x9 : %1$d</string>
+    <string name="highscore7">Meilleur score 7x7 : %1$d</string>
+    <string name="final_score">Score final : %1$d</string>
+    <string name="new_best_score">Nouveau record !</string>
+    <string name="settings">"Paramètres "</string>
+    <string name="new_fruits_per_move">Nouveaux fruits par coup</string>
+    <string name="alignment_for_9x9_grid">Alignement pour 9x9</string>
+    <string name="alignment_for_7x7_grid">Alignement pour 7x7</string>
+    <string name="reset_highscores">Réinitialiser les scores</string>
+    <string name="set_to_default">Valeur par défaut</string>
+</resources>

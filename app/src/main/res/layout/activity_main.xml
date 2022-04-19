@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
@@ -18,7 +19,7 @@
         android:id="@+id/textView"
         android:layout_width="222dp"
         android:layout_height="60dp"
-        android:text="@string/fruit_lines"
+        android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.56"
@@ -29,31 +30,29 @@
 
     <TextView
         android:id="@+id/highscore9Text"
-        android:layout_width="186dp"
-        android:layout_height="27dp"
+        android:layout_width="223dp"
+        android:layout_height="24dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="120dp"
         android:text="@string/highscore9"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.56"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.106" />
+        app:layout_constraintVertical_bias="0.123" />
 
     <TextView
         android:id="@+id/highscore7Text"
-        android:layout_width="186dp"
-        android:layout_height="30dp"
+        android:layout_width="218dp"
+        android:layout_height="24dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="120dp"
         android:text="@string/highscore7"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.561"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/highscore9Text"
-        app:layout_constraintVertical_bias="0.037" />
+        app:layout_constraintVertical_bias="0.038" />
 
     <Button
         android:id="@+id/ninegrid"
@@ -78,5 +77,17 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.499" />
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/settingsbutton"
+        android:src="@drawable/ic_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

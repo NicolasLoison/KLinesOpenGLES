@@ -29,7 +29,7 @@
         android:layout_below="@+id/score"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="1dp"
         android:fontFamily="cursive"
         android:text="@string/new_best_score"
         android:textColor="#ffffff"
@@ -64,10 +64,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/retry"
-        android:text="@string/home"
-        android:textColor="#ffffff"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
+        android:text="@string/home"
+        android:textColor="#ffffff"
         android:textSize="30sp" />
 
 </RelativeLayout>
