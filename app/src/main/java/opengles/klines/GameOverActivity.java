@@ -21,9 +21,8 @@ public class GameOverActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_game_over);
 
-        findViewById(R.id.retry).setOnClickListener(v -> {
-            startActivity(new Intent(GameOverActivity.this, OpenGLES30Activity.class));
-        });
+        findViewById(R.id.retry).setOnClickListener(v ->
+            startActivity(new Intent(GameOverActivity.this, OpenGLES30Activity.class)));
 
         findViewById(R.id.home).setOnClickListener(v ->
                 startActivity(new Intent(GameOverActivity.this, MainActivity.class)));
