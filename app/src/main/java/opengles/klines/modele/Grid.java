@@ -26,14 +26,12 @@ public class Grid {
     private int gridSize;
     private int tilesAligne;
     private final int nbNext;
-    private SharedPreferences prefs;
     private final ArrayList<Tile> grid;
     private final ArrayList<Tile> next;
 
     public Grid(SharedPreferences prefs, Score s, Drawer d){
         this.drawer = d;
         this.score = s;
-        this.prefs = prefs;
         int type = prefs.getInt("gridType", 9);
         switch(type){
             case 9:
@@ -165,8 +163,8 @@ public class Grid {
         int[][] directionsY = {{0,-1}, {0,1}};
 
         for(int[] dir : directionsX){
-            for(int i = 1; p.getX()+dir[0]*i<this.gridSize && p.getX()+dir[0]*i>0; i++){
-                Position pion_pos = new Position(p.getX()+dir[0]*i, p.getY());
+            for(int i = 1; p.getX() + dir[0]*i < this.gridSize && p.getX() + dir[0]*i >= 0; i++){
+                Position pion_pos = new Position(p.getX() + dir[0]*i, p.getY());
                 Tile tiles = null;
                 try {
                     tiles = this.getTiles(pion_pos);
@@ -180,7 +178,7 @@ public class Grid {
             }
         }
         for(int[] dir : directionsY){
-            for(int i = 1; p.getY()+dir[1]*i<this.gridSize && p.getY()+dir[1]*i>0; i++){
+            for(int i = 1; p.getY() + dir[1]*i < this.gridSize && p.getY() + dir[1]*i >= 0; i++){
                 Position pion_pos = new Position(p.getX(), p.getY()+dir[1]*i);
                 Tile tiles = null;
                 try {
