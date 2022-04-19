@@ -3,6 +3,8 @@ package opengles.klines.modele;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
+import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -23,27 +25,32 @@ public class Grid {
 
     private int gridSize;
     private int tilesAligne;
+    private final int nbNext;
+    private SharedPreferences prefs;
     private final ArrayList<Tile> grid;
     private final ArrayList<Tile> next;
 
-    public Grid(int type, Score s, Drawer d){
+    public Grid(SharedPreferences prefs, Score s, Drawer d){
         this.drawer = d;
         this.score = s;
+        this.prefs = prefs;
+        int type = prefs.getInt("gridType", 9);
         switch(type){
             case 9:
                 this.gridSize = 9;
-                this.tilesAligne = 5;
+                this.tilesAligne = prefs.getInt("nbAligned9", 5);
                 break;
             case 7:
                 this.gridSize = 7;
-                this.tilesAligne = 4;
+                this.tilesAligne = prefs.getInt("nbAligned7", 4);
         }
         this.grid = new ArrayList<>(this.gridSize * this.gridSize);
         for(int i = 0; i<getGridSize()*getGridSize();i++){
             this.grid.add(null);
         }
-        this.next = new ArrayList<>(3);
-        for(int i = 0; i<3;i++){
+        this.nbNext = prefs.getInt("nbNext", 3);
+        this.next = new ArrayList<>(nbNext);
+        for(int i = 0; i < nbNext; i++){
             this.next.add(null);
         }
         this.populateNext();
@@ -51,6 +58,10 @@ public class Grid {
 
     public int getGridSize() {
         return gridSize;
+    }
+
+    public int getNbNext() {
+        return nbNext;
     }
 
     public Position getPosition(Tile p){
@@ -79,15 +90,14 @@ public class Grid {
     }
 
     private Tile randomTiles(){
-        int rand = new Random().nextInt(7);
+        int rand = new Random().nextInt(gridSize == 9 ? 7 : 5);
         return new Tile(rand);
     }
 
     private void populateNext(){
-        for(int i = 0; i<3; i++){
+        for(int i = 0; i < nbNext; i++){
             this.next.set(i, this.randomTiles());
         }
-        this.drawer.drawNext(this.next);
     }
 
     private List<Position> getVide(){
@@ -111,7 +121,7 @@ public class Grid {
     public void spawnNext(){
         // on fait spawn les 3 tiles à 3 endroits vide de la grille puis on re populate
         List<Position> vide;
-        for(int i = 0; i<3; i++){
+        for(int i = 0; i < nbNext; i++){
             vide = this.getVide();
             if (vide.size() == 0){
                 this.drawer.gameOver();
