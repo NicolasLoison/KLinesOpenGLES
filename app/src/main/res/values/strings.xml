@@ -17,4 +17,7 @@
     <string name="alignment_for_7x7_grid">Alignment for 7x7 grid</string>
     <string name="reset_highscores">Reset highscores</string>
     <string name="set_to_default">Set to default</string>
+    <string name="highscore_reset">Highscore reseted</string>
+    <string name="tile_not_empty">Tile is not empty</string>
+    <string name="impossible_path">Impossible Path</string>
 </resources>

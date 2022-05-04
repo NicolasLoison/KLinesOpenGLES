@@ -14,4 +14,7 @@
     <string name="alignment_for_7x7_grid">Alignement pour 7x7</string>
     <string name="reset_highscores">Réinitialiser les scores</string>
     <string name="set_to_default">Valeur par défaut</string>
+    <string name="highscore_reset">Scores reset</string>
+    <string name="tile_not_empty">La case n\'est pas vide</string>
+    <string name="impossible_path">Chemin impossible</string>
 </resources>

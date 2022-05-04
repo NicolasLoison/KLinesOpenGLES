@@ -85,9 +85,9 @@ public class GameManager extends MonoBehaviour implements Score, Drawer {
                                 pionMoved = true;
                                 resetSelection();
                             } catch (TargetNotEmpty targetNotEmpty) {
-                                Toast.makeText(getActivity(), "La case n'est pas vide", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), R.string.tile_not_empty, Toast.LENGTH_SHORT).show();
                             } catch (NoPossiblePath targetNotEmpty) {
-                                Toast.makeText(getActivity(), "Chemin impossible", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), R.string.impossible_path, Toast.LENGTH_SHORT).show();
                             } catch (TilesNotInGrid targetNotEmpty) {
                                 targetNotEmpty.printStackTrace();
                             }

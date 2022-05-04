@@ -49,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
             editor.putInt("highscore9", 0);
             editor.putInt("highscore7", 0);
             editor.apply();
-            Toast.makeText(this, "Highscore reseted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.highscore_reset, Toast.LENGTH_SHORT).show();
         });
     }
 
